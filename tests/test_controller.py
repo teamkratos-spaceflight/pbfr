@@ -25,8 +25,12 @@ def test_initial_state(mocks):
 def test_transition_to_armed(mocks, monkeypatch):
     i2c, sensors, hardware, logger, telemetry = mocks
     
-    # Mock time to be > 5 seconds
-    monkeypatch.setattr("time.ticks_ms", lambda: 6000)
+    # Mock time to progress
+    ticks = [0, 6000] # 0ms at init, 6000ms at update
+    def mock_ticks():
+        return ticks.pop(0) if ticks else 6000
+    
+    monkeypatch.setattr("time.ticks_ms", mock_ticks)
     
     sensors['imu'].read_acceleration.return_value = (0, 0, 9.81)
     sensors['bmp'].read_altitude.return_value = 0.0
