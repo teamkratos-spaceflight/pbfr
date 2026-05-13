@@ -1,35 +1,39 @@
 from sensors.imu import IMU
 from sensors.buzzer import Buzzer
 from hardware.led import StatusLED
+from hardware.sdcard import SDLogger
+from sensors.bmp280 import BMP280
 from flight.boot import boot_sequence
 import time
 
 print("PBFR: Starting Main Application")
 
-# Run boot sequence first
 i2c, lcd = boot_sequence()
 
-# Initialize IMU with actual I2C if available
 imu = IMU(i2c)
 led = StatusLED()
+log = SDLogger()
+log.start()
 
 print("PBFR: Entering Main Loop")
 
-if lcd:
-    time.sleep(1)
-    lcd.clear()
-    lcd.putstr("PBFR ACTIVE")
+t0 = time.ticks_ms()
 
 while True:
+    t = (time.ticks_ms() - t0) / 1000
+
     accel = imu.read_acceleration()
-    
+
+    log.log(t, accel[0], accel[1], accel[2])
+
     if lcd:
+        lcd.move_to(0, 0)
+        lcd.putstr("PBFR ACTIVE")
+
         lcd.move_to(0, 1)
-        lcd.putstr(f"AX:{accel[0]:>5.2f} AY:{accel[1]:>5.2f}")
-        lcd.move_to(0, 2)
-        lcd.putstr(f"AZ:{accel[2]:>5.2f}")
-    
+        lcd.putstr("AX:{:.2f}".format(accel[0]))
+
     print("Accel:", accel)
+
     led.toggle()
-    
     time.sleep(1.0)

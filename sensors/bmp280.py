@@ -1,6 +1,6 @@
 import time
 
-class BMP200:
+class BMP280:
     def __init__(self, i2c):
         self.i2c = i2c
         self.address = 0x77
