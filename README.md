@@ -1,4 +1,4 @@
-# PBFR: Pico Based Flight Recorder
+# PBFR: Python Based firmware for amateur Rocketry 
 
 PBFR is a lightweight, robust flight computer application designed for the Raspberry Pi Pico W. It handles sensor data acquisition, logging, telemetry, and autonomous state transitions during flight.
 
