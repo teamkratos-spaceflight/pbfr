@@ -7,19 +7,29 @@ import time
 print("PBFR: Starting Main Application")
 
 # Run boot sequence first
-boot_sequence()
+i2c, lcd = boot_sequence()
 
-imu = IMU(None)
+# Initialize IMU with actual I2C if available
+imu = IMU(i2c)
 led = StatusLED()
 
 print("PBFR: Entering Main Loop")
 
+if lcd:
+    time.sleep(1)
+    lcd.clear()
+    lcd.putstr("PBFR ACTIVE")
+
 while True:
-    print("PBFR: Reading IMU...")
     accel = imu.read_acceleration()
-    print("Accel:", accel)
     
+    if lcd:
+        lcd.move_to(0, 1)
+        lcd.putstr(f"AX:{accel[0]:>5.2f} AY:{accel[1]:>5.2f}")
+        lcd.move_to(0, 2)
+        lcd.putstr(f"AZ:{accel[2]:>5.2f}")
+    
+    print("Accel:", accel)
     led.toggle()
     
-
-    time.sleep(2.0)
+    time.sleep(1.0)
