@@ -4,6 +4,7 @@ from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.bmp280 import BMP280
 from flight.boot import boot_sequence
+from telemetry.blemetry import BLESender
 import time
 
 print("PBFR: Starting Main Application")
@@ -13,6 +14,7 @@ i2c, lcd = boot_sequence()
 imu = IMU(i2c)
 led = StatusLED()
 log = SDLogger()
+send = BLESender()
 log.start()
 
 print("PBFR: Entering Main Loop")
