@@ -3,39 +3,36 @@ from sensors.buzzer import Buzzer
 from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.bmp280 import BMP280
+from sensors.buzzer import Buzzer
 from flight.boot import boot_sequence
 from telemetry.blemetry import BLESender
 import time
 
 print("PBFR: Starting Main Application")
 
-i2c, lcd = boot_sequence()
+from flight.controller import FlightController
 
+i2c = boot_sequence()
+
+# Sensors
 imu = IMU(i2c)
+bmp = BMP280(i2c)
+
+# Hardware components
 led = StatusLED()
+buzzer = Buzzer(20)
+
+# Services
 log = SDLogger()
 send = BLESender()
+
 log.start()
 
+# Initialize Controller
+sensors = {'imu': imu, 'bmp': bmp}
+hardware = {'led': led, 'buzzer': buzzer}
+
+fc = FlightController(i2c, sensors, hardware, log, send)
+
 print("PBFR: Entering Main Loop")
-
-t0 = time.ticks_ms()
-
-while True:
-    t = (time.ticks_ms() - t0) / 1000
-
-    accel = imu.read_acceleration()
-
-    log.log(t, accel[0], accel[1], accel[2])
-
-    if lcd:
-        lcd.move_to(0, 0)
-        lcd.putstr("PBFR ACTIVE")
-
-        lcd.move_to(0, 1)
-        lcd.putstr("AX:{:.2f}".format(accel[0]))
-
-    print("Accel:", accel)
-
-    led.toggle()
-    time.sleep(1.0)
+fc.run()
