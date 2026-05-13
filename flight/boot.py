@@ -1,10 +1,12 @@
 from sensors.buzzer import Buzzer
 from hardware.led import StatusLED
+from hardware.lcd_i2c import I2cLcd
+from machine import I2C, Pin
 
 
 def boot_sequence():
     led = StatusLED()
-    buzzer = Buzzer(15)
+    buzzer = Buzzer(20) # GP-15
 
     led.on()
 
