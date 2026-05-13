@@ -1,4 +1,4 @@
-name: Flight Computer CI
+name: Tests
 
 on:
   push:
