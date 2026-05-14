@@ -1,68 +1,61 @@
-import time
+from flight.states import FlightState
 
-class FlightState:
-    IDLE = "IDLE"
-    ARMED = "ARMED"
-    POWERED_FLIGHT = "POWERED_FLIGHT"
-    COAST = "COAST"
-    RECOVERY = "RECOVERY"
-    LANDED = "LANDED"
 
 class FlightController:
-    def __init__(self, i2c, sensors, hardware, logger, telemetry):
-        self.i2c = i2c
-        self.imu = sensors.get('imu')
-        self.bmp = sensors.get('bmp')
-        self.led = hardware.get('led')
-        self.buzzer = hardware.get('buzzer')
-        self.log = logger
-        self.send = telemetry
-        
-        self.state = FlightState.IDLE
-        self.start_time = time.ticks_ms()
-        self.last_tick = self.start_time
+    def __init__(self, imu, barometer, telemetry=None):
+        self.imu = imu
+        self.barometer = barometer
+        self.telemetry = telemetry
 
-    def get_time(self):
-        return (time.ticks_ms() - self.start_time) / 1000
+        self.state = FlightState.BOOT
+
+        self.last_altitude = 0
+        self.descent_counter = 0
+        self.landed_counter = 0
+
+    def boot(self):
+        self.state = FlightState.READY
+        self.emit("READY")
+
+    def emit(self, event):
+        if self.telemetry:
+            self.telemetry.send(event)
 
     def update(self):
-        t = self.get_time()
-        
-        # Read sensors
-        accel = self.imu.read_acceleration()
-        alt = self.bmp.read_altitude()
-        
-        # Log data
-        self.log.log(t, accel[0], accel[1], accel[2])
-        
-        # Telemetry
-        # msg = f"{t:.2f},{self.state},{accel[0]:.2f},{alt:.2f}"
-        # self.send.send(msg)
-        
-        # State transitions (simplified logic for now)
-        if self.state == FlightState.IDLE:
-            if t > 5: # Mock auto-arm
-                self.state = FlightState.ARMED
-                print(f"[{t:.2f}] STATE: ARMED")
-                self.buzzer.beep()
+        ax, ay, az = self.imu.read_acceleration()
+        altitude = self.barometer.read_altitude()
 
-        elif self.state == FlightState.ARMED:
-            if accel[2] > 15: # Detected launch
-                self.state = FlightState.POWERED_FLIGHT
-                print(f"[{t:.2f}] STATE: POWERED_FLIGHT")
+        # Launch detection
+        if self.state == FlightState.READY:
+            if az > 15:
+                self.state = FlightState.ASCENT
+                self.emit("LAUNCH")
 
-        elif self.state == FlightState.POWERED_FLIGHT:
-            if accel[2] < 2: # Engine burnout / coast
-                self.state = FlightState.COAST
-                print(f"[{t:.2f}] STATE: COAST")
+        # Apogee detection
+        elif self.state == FlightState.ASCENT:
+            if altitude < self.last_altitude:
+                self.descent_counter += 1
+            else:
+                self.descent_counter = 0
 
-        # ... further state logic would go here
+            if self.descent_counter >= 3:
+                self.state = FlightState.APOGEE
+                self.emit("APOGEE")
 
-        # Feedback
-        self.led.toggle()
+        # Descent
+        elif self.state == FlightState.APOGEE:
+            self.state = FlightState.DESCENT
+            self.emit("DESCENT")
 
-    def run(self):
-        print(f"Flight Controller Started in state: {self.state}")
-        while True:
-            self.update()
-            time.sleep(0.1)
+        # Landing
+        elif self.state == FlightState.DESCENT:
+            if altitude < 5 and abs(az - 9.81) < 0.5:
+                self.landed_counter += 1
+            else:
+                self.landed_counter = 0
+
+            if self.landed_counter >= 5:
+                self.state = FlightState.LANDED
+                self.emit("LANDED")
+
+        self.last_altitude = altitude
