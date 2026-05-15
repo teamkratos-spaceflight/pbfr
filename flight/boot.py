@@ -1,8 +1,10 @@
+from hardware.buzzer_diag import test_pin
 from sensors.buzzer import Buzzer
 from sensors.bmp280 import BMP280
 from hardware.led import StatusLED
 from sensors.imu import IMU
 from machine import I2C, Pin
+import hardware.buzzer_diag
 
 import time
 
@@ -26,12 +28,12 @@ def boot_sequence():
     led.on()
 
     try:
-        print("PBFR VERSION 1")
+        print("Welcome to PBFR 1!")
         print("Running self test...")
         bmp.boot_test()
         time.sleep(1)
-        # imu.boot_test()
-        # time.sleep(1)
+        imu.boot_test()
+        time.sleep(1)
 
         print("PBFR READY")
 

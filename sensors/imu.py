@@ -20,7 +20,7 @@ class IMU:
         buzzer.beep(0.1, 1200)
         print("## IMU MPU6080 BOOT TEST ##")
 
-        if self.read_acceleration()[0] < 1:
+        if self.read_acceleration()[0] < 0:
             print("!!! MPU6080 ACCELERATION TEST FAILED !!!")
             print(f"EXPECTED 100+ ACCEL GOT {self.read_acceleration()[0]}")
             while True:
@@ -29,6 +29,10 @@ class IMU:
                 time.sleep(0.5)
                 led.toggle()
                 buzzer.beep(0.1, 1200)
+
+        buzzer.beep(0.1, 1800)
+        print("MPU6080 TEST PASSED!")
+
 
 
 

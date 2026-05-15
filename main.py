@@ -8,7 +8,6 @@ from flight.boot import boot_sequence
 from telemetry.blemetry import BLESender
 import time
 
-print("PBFR: Starting Main Application")
 
 from flight.controller import FlightController
 

@@ -1,7 +1,7 @@
 from machine import Pin, PWM
 import time
 
-PINS_TO_TEST = [15, 14, 13, 16, 18]
+PINS_TO_TEST = [15]
 
 def test_pin(pin_num):
     print(f"\n--- Testing Pin {pin_num} ---")
@@ -29,7 +29,7 @@ def test_pin(pin_num):
     except Exception as e:
         print(f"  PWM Error on Pin {pin_num}: {e}")
 
-print("STARTING BUZZER DIAGNOSTICS")
+print("PRE-PBFS BUZZER TEST")
 print("Listen carefully for any sound.")
 
 for pin in PINS_TO_TEST:
