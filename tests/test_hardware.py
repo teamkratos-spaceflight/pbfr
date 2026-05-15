@@ -2,11 +2,8 @@ import pytest
 import sys
 from unittest.mock import MagicMock
 
-# Mock machine module for hardware tests
-mock_machine = MagicMock()
-sys.modules['machine'] = mock_machine
-mock_machine.Pin = MagicMock()
-mock_machine.PWM = MagicMock()
+# Mock machine module for hardware tests is already setup in conftest.py
+mock_machine = sys.modules['machine']
 
 from hardware.led import StatusLED
 from sensors.buzzer import Buzzer

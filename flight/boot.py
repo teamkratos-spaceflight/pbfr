@@ -44,25 +44,6 @@ def boot_sequence():
 
         print("PBFR READY")
 
-        imu = IMU(None)
-        bmp = BMP280(None)
-
-        fc = FlightController(
-            i2c=None,
-            sensors={"imu": imu, "bmp": bmp},
-            hardware={
-                "led": StatusLED(),
-                "buzzer": Buzzer(15)
-            },
-            logger=None,
-            telemetry=None
-        )
-
-        print("RUNNING FULL FLIGHT SCENARIO")
-
-        run(fc)
-        
-        # After full scenario, don't trap into an infinite loop so boot sequence can complete
         
         return i2c
 
