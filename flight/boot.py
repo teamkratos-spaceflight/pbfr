@@ -21,6 +21,8 @@ def boot_sequence():
     sd = SDLogger()
     fc = FlightController()
 
+    test_wdt = True
+
 
 
     
@@ -35,7 +37,7 @@ def boot_sequence():
 
     try:
         print("Welcome to PBFR 1!")
-        if ResetChecker.watchdog_triggered():
+        if test_wdt is True:
             print("BOOT HALT: LOC-F!")
             fc.setstate(FlightState.LOC_F)
             buzzer.beep(1.0, 1200)
