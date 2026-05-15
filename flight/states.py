@@ -10,3 +10,7 @@ class FlightState:
     LANDED = 6
     FAULT = 7
     DOWNLOAD = 8
+    LOC_A = 9
+    LOC_F = 10
+    LOCMC = 11 # lets never hope for this one!
+    LOS = 12
