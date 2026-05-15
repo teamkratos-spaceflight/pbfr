@@ -14,24 +14,24 @@ import time
 
 
 def boot_sequence():
-    led = StatusLED()
-    buzzer = Buzzer(15) # GP-15
-    imu = IMU(I2C)
-    bmp = BMP280(BMP280)
-    sd = SDLogger()
-    fc = FlightController()
-
-    test_wdt = True
-
-
-
-    
-    # Initialize I2C
+    # Initialize I2C first
     try:
         i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
     except Exception as e:
         print("I2C Init Failed:", e)
         i2c = None
+
+    led = StatusLED()
+    buzzer = Buzzer(15) # GP-15
+    imu = IMU(i2c)
+    bmp = BMP280(i2c)
+    sd = SDLogger()
+    
+    hardware = {'led': led, 'buzzer': buzzer}
+    sensors = {'imu': imu, 'bmp': bmp}
+    fc = FlightController(i2c, sensors, hardware, sd)
+
+    test_wdt = True
 
     led.on()
 
