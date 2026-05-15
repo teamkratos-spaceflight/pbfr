@@ -1,3 +1,5 @@
+
+
 from flight.states import FlightState
 from hardware.buzzer import Buzzer
 from sensors.bmp280 import BMP280
@@ -37,10 +39,16 @@ def boot_sequence():
 
     try:
         print("Welcome to PBFR 1!")
-        if test_wdt is True:
+        if ResetChecker.watchdog_triggered():
             print("BOOT HALT: LOC-F!")
             fc.setstate(FlightState.LOC_F)
             buzzer.beep(1.0, 1200)
+            while True:
+                led.toggle()
+                time.sleep(0.2)
+                led.toggle()
+                buzzer.beep(0.2, 1200)
+                time.sleep(0.2)
 
         print("Running self test...")
         bmp.boot_test()
