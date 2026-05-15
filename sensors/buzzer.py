@@ -6,11 +6,9 @@ class Buzzer:
         self.buzzer = PWM(Pin(pin_num), freq=2000)
 
     def beep(self, duration=0.1):
-        print("Buzzer: Beep starting...")
         self.buzzer.duty_u16(32768)
         time.sleep(duration)
         self.buzzer.duty_u16(0)
-        print("Buzzer: Beep ended")
 
     def boot_beep(self):
         for _ in range(3):
