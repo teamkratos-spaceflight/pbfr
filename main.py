@@ -35,4 +35,6 @@ hardware = {'led': led, 'buzzer': buzzer}
 fc = FlightController(i2c, sensors, hardware, log, send)
 
 print("PBFR: Entering Main Loop")
-fc.run()
+while True:
+    fc.update()
+    time.sleep(0.05)

@@ -1,4 +1,6 @@
 import time
+from hardware.led import StatusLED
+from sensors.buzzer import Buzzer
 
 class BMP280:
     def __init__(self, i2c):
@@ -12,3 +14,36 @@ class BMP280:
     def read_altitude(self):
         # simple fake altitude model for now
         return 0.0
+
+    def boot_test(self):
+        led = StatusLED()
+        buzzer = Buzzer(15) # means Pin 15. ALWAYS USE PIN 15!! (PHYSICAL PIN 20)!!!
+        led.toggle()
+        print("BMP280 boot test")
+        print("BMP280 pressure read test...")
+        self.read_pressure()
+        if self.read_pressure() > 1:
+            print("BMP280 pressure read test failed")
+            print("BMP FAILURE!")
+            while True:
+                led.toggle()
+                buzzer.beep()
+                time.sleep(1)
+                led.toggle()
+                buzzer.beep()
+        print("BMP280 pressure read test passed")
+        print("BMP280 altitude read test...")
+        self.read_altitude()
+        if self.read_altitude() > 1:
+            print("BMP280 altitude read test failed")
+            print("BMP FAILURE!")
+            while True:
+                led.toggle()
+                buzzer.beep()
+                time.sleep(1)
+                led.toggle()
+                buzzer.beep()
+        print("BMP280 altitude read test passed")
+        print("BMP280 PASSED")
+
+

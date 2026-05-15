@@ -1,3 +1,4 @@
+import pytest
 from unittest.mock import MagicMock
 
 from flight.controller import FlightController
@@ -7,6 +8,16 @@ import sys
 
 ON_PICO = sys.platform == "rp2"
 
+@pytest.fixture
+def mocks():
+    sensors = {
+        'imu': MagicMock(),
+        'bmp': MagicMock()
+    }
+    logger = MagicMock()
+    telemetry = MagicMock()
+    i2c = MagicMock()
+    return i2c, sensors, None, logger, telemetry
 
 def create_hardware():
     if ON_PICO:
@@ -40,8 +51,8 @@ def test_full_flight(mocks):
 
     # Simulated acceleration profile
     sensors['imu'].read_acceleration.side_effect = [
-        (0, 0, 9.81),   # idle
-        (0, 0, 9.81),   # idle
+        (0, 0, 9.81),   # idle -> armed
+        (0, 0, 9.81),   # armed
         (0, 0, 22.0),   # launch
         (0, 0, 20.0),   # powered ascent
         (0, 0, 15.0),   # coast
@@ -49,7 +60,7 @@ def test_full_flight(mocks):
         (0, 0, 9.81),
         (0, 0, 9.81),
         (0, 0, 9.81),
-    ]
+    ] + [(0, 0, 9.81)] * 10
 
     # Simulated altitude profile
     sensors['bmp'].read_altitude.side_effect = [
@@ -62,10 +73,10 @@ def test_full_flight(mocks):
         200,
         50,
         0
-    ]
+    ] + [0] * 10
 
-    # Run simulated flight loop
-    for _ in range(9):
+    # Run simulated flight loop (15 checks needed to wait for landing condition to hit)
+    for _ in range(15):
         fc.update()
 
     # Validate final state

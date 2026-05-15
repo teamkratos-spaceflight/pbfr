@@ -1,6 +1,4 @@
-from enum import Enum
-
-class FlightState(Enum):
+class FlightState:
     IDLE = -1
     BOOT = 0
     READY = 1
