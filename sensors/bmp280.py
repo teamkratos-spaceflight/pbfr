@@ -1,6 +1,6 @@
 import time
 from hardware.led import StatusLED
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 
 class BMP280:
     def __init__(self, i2c):

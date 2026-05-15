@@ -1,7 +1,8 @@
 import time
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 from hardware.led import StatusLED
-from flight.statetones import STATETONES
+
+
 class IMU:
     def __init__(self, i2c):
         self.i2c = i2c

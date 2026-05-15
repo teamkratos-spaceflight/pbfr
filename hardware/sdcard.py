@@ -1,7 +1,7 @@
 import time
 
 from hardware.led import StatusLED
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 
 buzzer = Buzzer(15)
 led = StatusLED()

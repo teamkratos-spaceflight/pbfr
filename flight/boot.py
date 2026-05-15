@@ -1,13 +1,10 @@
-from hardware.buzzer_diag import test_pin
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 from sensors.bmp280 import BMP280
 from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.imu import IMU
 from machine import I2C, Pin
 # import hardware.buzzer_diag
-from flight.scenarios.full_flight import run
-from flight.controller import FlightController
 
 import time
 

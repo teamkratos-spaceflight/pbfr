@@ -1,6 +1,5 @@
 import time
 from flight.states import FlightState
-from sensors.buzzer import Buzzer
 
 
 class FlightController:

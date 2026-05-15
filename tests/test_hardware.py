@@ -1,4 +1,3 @@
-import pytest
 import sys
 from unittest.mock import MagicMock
 
@@ -6,7 +5,7 @@ from unittest.mock import MagicMock
 mock_machine = sys.modules['machine']
 
 from hardware.led import StatusLED
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 from flight.controller import FlightController
 from flight.states import FlightState
 

@@ -26,7 +26,7 @@ def mocks():
 def create_hardware():
     if ON_PICO:
         from hardware.led import StatusLED
-        from sensors.buzzer import Buzzer
+        from hardware.buzzer import Buzzer
 
         return {
             "led": StatusLED(),

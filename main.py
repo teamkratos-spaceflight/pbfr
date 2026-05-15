@@ -1,9 +1,8 @@
 from sensors.imu import IMU
-from sensors.buzzer import Buzzer
 from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.bmp280 import BMP280
-from sensors.buzzer import Buzzer
+from hardware.buzzer import Buzzer
 from flight.boot import boot_sequence
 from telemetry.blemetry import BLESender
 import time
