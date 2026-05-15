@@ -20,25 +20,24 @@ class BMP280:
         buzzer = Buzzer(15) # means Pin 15. ALWAYS USE PIN 15!! (PHYSICAL PIN 20)!!!
         led.toggle()
         print("BMP280 boot test")
-        buzzer.beep()
+        buzzer.beep(0.1, 3000)
         print("BMP280 pressure read test...")
         self.read_pressure()
-        if self.read_pressure() > 1:
+        if self.read_pressure() < 1:
             pressure = self.read_pressure()
             print("BMP280 pressure read test failed")
             print(f"Test failed at: {pressure} when pressure is {pressure*100}%")
             print("BMP FAILURE!")
             while True:
                 led.toggle()
-                buzzer.beep(0.2, 440)
-                time.sleep(0.1)
-                buzzer.beep(0.2, 440)
+                buzzer.beep(0.2, 400)
                 time.sleep(0.5)
+                buzzer.beep(0.2, 1200)
                 led.toggle()
-                buzzer.beep(0.1, 3000)
                 time.sleep(0.5)
+
         print("BMP280 pressure read test passed")
-        buzzer.beep()
+
         print("BMP280 altitude read test...")
         self.read_altitude()
         if self.read_altitude() > 1:

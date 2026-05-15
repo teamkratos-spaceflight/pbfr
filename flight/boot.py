@@ -1,12 +1,16 @@
 from sensors.buzzer import Buzzer
 from sensors.bmp280 import BMP280
 from hardware.led import StatusLED
+from sensors.imu import IMU
 from machine import I2C, Pin
+
+import time
 
 
 def boot_sequence():
     led = StatusLED()
     buzzer = Buzzer(20) # GP-15
+    imu = IMU(I2C)
     bmp=BMP280(BMP280)
     
     # Initialize I2C
@@ -22,9 +26,12 @@ def boot_sequence():
         print("PBFR VERSION 1")
         print("Running self test...")
         bmp.boot_test()
+        time.sleep(1)
+        imu.boot_test()
 
-        for _ in range(3):
-            buzzer.beep()
+        buzzer.beep(0.2, 440)
+        time.sleep(0.1)
+        buzzer.beep(0.2, 3000)
 
         print("PBFR READY")
             
