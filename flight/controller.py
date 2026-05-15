@@ -46,6 +46,7 @@ class FlightController:
         # Launch detection
         elif self.state == FlightState.ARMED or self.state == FlightState.READY:
             if az > 15:
+                print("LAUNCH!")
                 self.setstate(FlightState.POWERED_FLIGHT)
 
         # Apogee detection
@@ -56,10 +57,12 @@ class FlightController:
                 self.descent_counter = 0
 
             if self.descent_counter >= 3:
+                print("APOGEE!")
                 self.setstate(FlightState.APOGEE)
 
         # Descent
         elif self.state == FlightState.APOGEE:
+            print("DESCENT!")
             self.setstate(FlightState.DESCENT)
 
         # Landing
@@ -70,6 +73,7 @@ class FlightController:
                 self.landed_counter = 0
 
             if self.landed_counter >= 5:
+                print("LANDED!")
                 self.setstate(FlightState.LANDED)
 
         self.last_altitude = altitude

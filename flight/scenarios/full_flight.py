@@ -1,4 +1,5 @@
 from flight.states import FlightState
+import time
 
 
 def run(fc):
@@ -30,7 +31,13 @@ def run(fc):
     fc.sensors['imu'].read_acceleration = read_accel
     fc.sensors['bmp'].read_altitude = read_alt
 
+    try:
+        fc.init_time = time.ticks_ms() - 6000
+    except AttributeError:
+        fc.init_time = -6000
+
     for _ in range(15):
         fc.update()
+        time.sleep(0.5)
 
     return fc.state
