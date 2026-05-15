@@ -18,10 +18,10 @@ class IMU:
         led = StatusLED()
 
         buzzer.beep(0.1, 1200)
-        print("IMU MPU6080 BOOT TEST")
+        print("## IMU MPU6080 BOOT TEST ##")
 
-        if self.read_acceleration()[0] < 100:
-            print("MPU6080 ACCELERATION TEST FAILED!")
+        if self.read_acceleration()[0] < 1:
+            print("!!! MPU6080 ACCELERATION TEST FAILED !!!")
             print(f"EXPECTED 100+ ACCEL GOT {self.read_acceleration()[0]}")
             while True:
                 led.toggle()

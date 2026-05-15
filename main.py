@@ -14,13 +14,19 @@ from flight.controller import FlightController
 
 i2c = boot_sequence()
 
+MELODY = [
+    (1000, 0.1),
+    (1500, 0.1),
+    (2000, 0.2),
+]
+
 # Sensors
 imu = IMU(i2c)
 bmp = BMP280(i2c)
 
 # Hardware components
 led = StatusLED()
-buzzer = Buzzer(20)
+buzzer = Buzzer(15)
 
 # Services
 log = SDLogger()
@@ -35,6 +41,10 @@ hardware = {'led': led, 'buzzer': buzzer}
 fc = FlightController(i2c, sensors, hardware, log, send)
 
 print("PBFR: Entering Main Loop")
+
+for freq, dur in MELODY:
+    buzzer.beep(dur, freq)
+
 while True:
     fc.update()
     time.sleep(0.05)
