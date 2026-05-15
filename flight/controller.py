@@ -1,5 +1,6 @@
 import time
 from flight.states import FlightState
+from sensors.buzzer import Buzzer
 
 
 class FlightController:
@@ -40,16 +41,12 @@ class FlightController:
                 current_time = 5000
             
             if current_time - self.init_time >= 5000:
-                self.state = FlightState.ARMED
-                self.emit("ARMED")
-                if 'buzzer' in self.hardware and self.hardware['buzzer']:
-                    self.hardware['buzzer'].beep()
+                self.setstate(FlightState.ARMED)
 
         # Launch detection
         elif self.state == FlightState.ARMED or self.state == FlightState.READY:
             if az > 15:
-                self.state = FlightState.POWERED_FLIGHT
-                self.emit("LAUNCH")
+                self.setstate(FlightState.POWERED_FLIGHT)
 
         # Apogee detection
         elif self.state == FlightState.POWERED_FLIGHT or self.state == FlightState.ASCENT:
@@ -59,13 +56,11 @@ class FlightController:
                 self.descent_counter = 0
 
             if self.descent_counter >= 3:
-                self.state = FlightState.APOGEE
-                self.emit("APOGEE")
+                self.setstate(FlightState.APOGEE)
 
         # Descent
         elif self.state == FlightState.APOGEE:
-            self.state = FlightState.DESCENT
-            self.emit("DESCENT")
+            self.setstate(FlightState.DESCENT)
 
         # Landing
         elif self.state == FlightState.DESCENT:
@@ -75,7 +70,39 @@ class FlightController:
                 self.landed_counter = 0
 
             if self.landed_counter >= 5:
-                self.state = FlightState.LANDED
-                self.emit("LANDED")
+                self.setstate(FlightState.LANDED)
 
         self.last_altitude = altitude
+
+    def setstate(self, new_state):
+        self.state = new_state
+
+        event = "READY"
+        if new_state == FlightState.ARMED:
+            event = "ARMED"
+        elif new_state == FlightState.POWERED_FLIGHT:
+            event = "LAUNCH"
+        elif new_state == FlightState.APOGEE:
+            event = "APOGEE"
+        elif new_state == FlightState.DESCENT:
+            event = "DESCENT"
+        elif new_state == FlightState.LANDED:
+            event = "LANDED"
+            
+        self.emit(event)
+
+        buzzer = self.hardware.get('buzzer')
+        if not buzzer:
+            return
+
+        if new_state == FlightState.ARMED:
+            buzzer.beep(0.1, 1000)
+        elif new_state == FlightState.POWERED_FLIGHT:
+            buzzer.beep(0.2, 2000)
+        elif new_state == FlightState.APOGEE:
+            buzzer.beep(0.3, 3000)
+        elif new_state == FlightState.DESCENT:
+            buzzer.beep(0.4, 5000)
+        elif new_state == FlightState.LANDED:
+            # We don't want a blocking while loop here, otherwise update loop hangs
+            buzzer.beep(0.1, 800)
