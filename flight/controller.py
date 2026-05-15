@@ -104,9 +104,9 @@ class FlightController:
         elif new_state == FlightState.POWERED_FLIGHT:
             buzzer.beep(0.2, 2000)
         elif new_state == FlightState.APOGEE:
-            buzzer.beep(0.3, 3000)
+            buzzer.beep(0.3, 1400)
         elif new_state == FlightState.DESCENT:
-            buzzer.beep(0.4, 5000)
+            buzzer.beep(1, 1500)
         elif new_state == FlightState.LANDED:
             # We don't want a blocking while loop here, otherwise update loop hangs
-            buzzer.beep(0.1, 800)
+            buzzer.beep(1, 800)

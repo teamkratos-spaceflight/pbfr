@@ -5,7 +5,7 @@ from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.imu import IMU
 from machine import I2C, Pin
-import hardware.buzzer_diag
+# import hardware.buzzer_diag
 from flight.scenarios.full_flight import run
 from flight.controller import FlightController
 
