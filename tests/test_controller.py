@@ -1,6 +1,9 @@
 import pytest
 from unittest.mock import MagicMock
+
+from flight import watchdog
 from flight.controller import FlightController, FlightState
+from fakes.fakewatchdog import FakeWatchdog
 
 @pytest.fixture
 def mocks():
