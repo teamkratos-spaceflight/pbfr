@@ -2,6 +2,7 @@ from hardware.buzzer_diag import test_pin
 from sensors.buzzer import Buzzer
 from sensors.bmp280 import BMP280
 from hardware.led import StatusLED
+from hardware.sdcard import SDLogger
 from sensors.imu import IMU
 from machine import I2C, Pin
 import hardware.buzzer_diag
@@ -15,6 +16,7 @@ def boot_sequence():
     buzzer = Buzzer(20) # GP-15
     imu = IMU(I2C)
     bmp=BMP280(BMP280)
+    sd = SDLogger()
 
 
     
@@ -33,6 +35,8 @@ def boot_sequence():
         bmp.boot_test()
         time.sleep(1)
         imu.boot_test()
+        time.sleep(1)
+        sd.boot_test()
         time.sleep(1)
 
         print("PBFR READY")
