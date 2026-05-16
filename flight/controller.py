@@ -1,5 +1,6 @@
 import time
 from flight.states import FlightState
+from flight.validation import SensorValidator
 
 
 class FlightController:
@@ -9,6 +10,7 @@ class FlightController:
         self.hardware = hardware
         self.logger = logger
         self.telemetry = telemetry
+        self.validator = SensorValidator()
 
         self.state = FlightState.IDLE
         try:
@@ -21,6 +23,8 @@ class FlightController:
         self.descent_counter = 0
         self.landed_counter = 0
 
+
+
     def boot(self):
         self.state = FlightState.READY
         self.emit("READY")
@@ -32,6 +36,20 @@ class FlightController:
     def update(self):
         ax, ay, az = self.sensors['imu'].read_acceleration()
         altitude = self.sensors['bmp'].read_altitude()
+
+        accel = self.sensors['imu'].read_acceleration()
+        altitude = self.sensors['bmp'].read_altitude()
+
+        accel_result = self.validator.validate_acceleration(accel)
+        alt_result = self.validator.validate_altitude(altitude)
+
+        if not accel_result.valid:
+            print("FAULT:", accel_result.fault)
+            self.set_state(FlightState.LOC_F)
+
+        if not alt_result.valid:
+            print("FAULT:", alt_result.fault)
+            self.set_state(FlightState.LOC_F)
 
         if self.state == FlightState.IDLE:
             try:
