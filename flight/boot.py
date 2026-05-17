@@ -1,5 +1,4 @@
-
-
+import telemetry
 from flight.states import FlightState
 from hardware.buzzer import Buzzer
 from sensors.bmp280 import BMP280
@@ -7,6 +6,7 @@ from hardware.led import StatusLED
 from hardware.sdcard import SDLogger
 from sensors.imu import IMU
 from machine import I2C, Pin
+from telemetry.blemetry import BLESender
 # import hardware.buzzer_diag
 from flight.resetcheck import ResetChecker
 from flight.controller import FlightController
@@ -28,6 +28,7 @@ def boot_sequence():
     imu = IMU(i2c)
     bmp = BMP280(i2c)
     sd = SDLogger()
+    ble = BLESender()
     
     hardware = {'led': led, 'buzzer': buzzer}
     sensors = {'imu': imu, 'bmp': bmp}
@@ -39,6 +40,7 @@ def boot_sequence():
 
     try:
         print("Welcome to PBFR 1!")
+        ble.send("Hello from PBFR!")
         if ResetChecker.watchdog_triggered():
             print("BOOT HALT: LOC-F!")
             fc.setstate(FlightState.LOC_F)
